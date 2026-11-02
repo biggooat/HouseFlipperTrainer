@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <AssemblyName>HouseFlipperTrainer</AssemblyName>
+    <RootNamespace>HFTrainer.Injector</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <ProjectReference Include="..\Payload\Payload.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+  <!-- Payload вшивается в .exe как ресурс -->
+  <Target Name="EmbedPayload" BeforeTargets="PrepareForBuild">
+    <MSBuild Projects="..\Payload\Payload.csproj" Targets="Build" Properties="Configuration=$(Configuration);GameDir=$(GameDir)">
+      <Output TaskParameter="TargetOutputs" ItemName="PayloadDll" />
+    </MSBuild>
+    <ItemGroup>
+      <EmbeddedResource Include="@(PayloadDll)" LogicalName="HFTrainer.Payload.dll" />
+    </ItemGroup>
+  </Target>
+</Project>
